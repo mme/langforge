@@ -1,3 +1,10 @@
+- name: jupyterlab
+  title: JupyterLab
+  selected: true
+  packages:
+    - ipykernel
+    - jupyterlab
+
 - name: openai
   title: OpenAI
   selected: true

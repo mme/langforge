@@ -58,6 +58,8 @@
     "layoutparser",
     "layoutmodels",
     "joho",
-    "godotenv"
+    "godotenv",
+    "ipykernel",
+    "jupyterlab"
   ]
 }
