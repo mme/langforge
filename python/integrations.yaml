@@ -1,0 +1,275 @@
+- name: openai
+  title: OpenAI
+  selected: true
+  packages:
+    - openai
+  apiKeys:
+    - OPENAI_API_KEY
+
+- name: serpapi
+  title: SerpAPI
+  selected: false
+  packages:
+    - google-search-results
+  apiKeys:
+    - SERPAPI_API_KEY
+
+- name: googlesearchapi
+  title: Google Search
+  selected: false
+  packages:
+    - google-api-python-client
+  apiKeys:
+    - GOOGLE_API_KEY
+    - GOOGLE_CSE_ID
+
+- name: wolframalpha
+  title: Wolfram Alpha
+  selected: false
+  packages:
+    - wolframalpha
+  apiKeys:
+    - WOLFRAM_ALPHA_APPID
+
+- name: wikipedia
+  title: Wikipedia
+  selected: false
+  packages:
+    - wikipedia
+
+- name: faiss
+  title: FAISS
+  selected: false
+  packages:
+    - faiss-cpu
+
+- name: unstructured
+  title: Unstructured
+  selected: false
+  packages:
+    - unstructured[local-inference]
+    - detectron2@git+https://github.com/facebookresearch/detectron2.git@v0.6#egg=detectron2
+    - layoutparser[layoutmodels,tesseract]
+  preInstallCommands:
+    - pip install torch --disable-pip-version-check
+
+- name: tiktoken
+  title: TikToken
+  selected: false
+  packages:
+    - tiktoken
+
+- name: weaviate
+  title: Weaviate
+  selected: false
+  packages:
+    - weaviate-client
+
+- name: cohere
+  title: Cohere
+  selected: false
+  packages:
+    - cohere
+  apiKeys:
+    - COHERE_API_KEY
+
+- name: gooseai
+  title: GooseAI
+  selected: false
+  packages:
+    - openai
+  apiKeys:
+    - GOOSEAI_API_KEY
+
+- name: huggingface_hub
+  title: HuggingFace Hub
+  selected: false
+  packages:
+    - huggingface_hub
+    - transformers
+    - datasets
+  apiKeys:
+    - HUGGINGFACEHUB_API_TOKEN
+
+- name: petals
+  title: Petals
+  selected: false
+  packages:
+    - petals
+  apiKeys:
+    - HUGGINGFACE_API_KEY
+
+- name: cerebriumai
+  title: CerebriumAI
+  selected: false
+  packages:
+    - cerebrium
+  apiKeys:
+    - CEREBRIUMAI_API_KEY
+
+- name: promptlayer
+  title: PromptLayer
+  selected: false
+  packages:
+    - promptlayer
+  apiKeys:
+    - PROMPTLAYER_API_KEY
+
+- name: natbot
+  title: NatBot
+  selected: false
+  packages:
+    - playwright
+
+- name: elasticsearch
+  title: Elasticsearch
+  selected: false
+  packages:
+    - elasticsearch
+
+- name: manifest
+  title: Manifest
+  selected: false
+  packages:
+    - manifest-ml
+
+- name: opensearch
+  title: OpenSearch
+  selected: false
+  packages:
+    - opensearch-py
+
+- name: deeplake
+  title: DeepLake
+  selected: false
+  packages:
+    - deeplake
+
+- name: spacy
+  title: Spacy
+  selected: false
+  packages:
+    - spacy
+  postInstallCommands:
+    - python -m spacy download en_core_web_sm
+
+- name: nltk
+  title: NLTK
+  selected: false
+  packages:
+    - nltk
+  postInstallCommands:
+    - python -m nltk.downloader punkt
+
+- name: atlasdb
+  title: AtlasDB
+  selected: false
+  packages:
+    - nomic
+
+- name: ai21
+  title: AI21
+  selected: false
+  packages:
+    - ai21
+  apiKeys:
+    - AI21_API_KEY
+
+- name: banana
+  title: Banana
+  selected: false
+  packages:
+    - banana-dev
+  apiKeys:
+    - BANANA_API_KEY
+
+- name: chromadb
+  title: ChromaDB
+  selected: false
+  packages:
+    - chromadb
+
+- name: deepinfra
+  title: DeepInfra
+  selected: false
+  apiKeys:
+    - DEEPINFRA_API_TOKEN
+
+- name: deeplake
+  title: Deep Lake
+  selected: false
+  packages:
+    - deeplake
+
+- name: forefrontai
+  title: ForefrontAI
+  selected: false
+  apiKeys:
+    - FOREFRONTAI_API_KEY
+
+- name: graphsignal
+  title: Graphsignal
+  selected: false
+  packages:
+    - graphsignal
+  apiKeys:
+    - GRAPHSIGNAL_API_KEY
+
+- name: hazyresearch
+  title: Hazy Research
+  selected: false
+  packages:
+    - manifest-ml
+
+- name: helicone
+  title: Helicone
+  selected: false
+  packages: []
+  apiKeys:
+    - OPENAI_API_KEY
+
+- name: modal
+  title: Modal
+  selected: false
+  packages:
+    - modal-client
+
+- name: nlpcloud
+  title: NLPCloud
+  selected: false
+  packages:
+    - nlpcloud
+  apiKeys:
+    - NLPCLOUD_API_KEY
+
+- name: opensearch-py
+  title: OpenSearch
+  selected: false
+  packages:
+    - opensearch-py
+
+- name: pinecone
+  title: Pinecone
+  selected: false
+  packages:
+    - pinecone-client
+
+- name: runhouse
+  title: Runhouse
+  selected: false
+  packages:
+    - runhouse
+
+- name: stochasticai
+  title: StochasticAI
+  selected: false
+  packages:
+    - stochasticx
+  apiKeys:
+    - STOCHASTICAI_API_KEY
+
+- name: writer
+  title: Writer
+  selected: false
+  apiKeys:
+    - WRITER_API_KEY

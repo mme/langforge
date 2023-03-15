@@ -1,0 +1,13 @@
+{
+  "python.linting.pylintArgs": ["--ignore=__pycache__"],
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/.ipynb_checkpoints": true
+  },
+  "[go]": {
+    "editor.insertSpaces": true,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "golang.go",
+    "rewrap.autoWrap.enabled": true
+  }
+}
