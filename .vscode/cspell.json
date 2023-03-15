@@ -60,6 +60,12 @@
     "joho",
     "godotenv",
     "ipykernel",
-    "jupyterlab"
+    "jupyterlab",
+    "dotenv",
+    "apputils",
+    "labextension",
+    "ipython",
+    "IPYTHONDIR",
+    "extensionmanager"
   ]
 }

@@ -54,9 +54,17 @@ func createAppCmd(appName string) {
 
 	handler := python.NewPythonHandler()
 
+	currentDir, err := os.Getwd()
+	if err != nil {
+		fmt.Println("Error getting current directory:", err)
+		return
+	}
+
+	dir := filepath.Join(currentDir, appName)
+
 	// Check if a file with the specified app name already exists
-	if _, err := os.Stat(appName); err == nil {
-		panic(fmt.Errorf("file with name '%s' already exists", appName))
+	if _, err := os.Stat(dir); err == nil {
+		panic(fmt.Errorf("file with name '%s' already exists", dir))
 	}
 
 	tui.DisplayBanner()
@@ -132,12 +140,7 @@ func createAppCmd(appName string) {
 	fmt.Println("Installing dependencies...")
 	tui.EmptyLine()
 
-	err = handler.ExecuteChanges()
-	if err != nil {
-		panic(err)
-	}
-
-	err = python.WriteRequirementsTxt(filepath.Join(appName, "requirements.txt"))
+	err = handler.ExecuteChanges(dir)
 	if err != nil {
 		panic(err)
 	}

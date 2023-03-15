@@ -1,9 +1,18 @@
+- name: langchain
+  title: LangChain
+  selected: true
+  packages:
+    - langchain
+
 - name: jupyterlab
   title: JupyterLab
   selected: true
   packages:
     - ipykernel
     - jupyterlab
+    - python-dotenv
+  postInstallCommands:
+    - jupyter labextension disable @jupyterlab/apputils-extension:announcements
 
 - name: openai
   title: OpenAI
@@ -249,17 +258,14 @@
   apiKeys:
     - NLPCLOUD_API_KEY
 
-- name: opensearch-py
-  title: OpenSearch
-  selected: false
-  packages:
-    - opensearch-py
-
 - name: pinecone
   title: Pinecone
   selected: false
   packages:
     - pinecone-client
+  apiKeys:
+    - PINECONE_API_KEY
+    - PINECONE_ENV
 
 - name: runhouse
   title: Runhouse

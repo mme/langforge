@@ -106,20 +106,10 @@ func ShellSource(script string) error {
 // and executes them sequentially. It returns an error if any of the commands fail
 // to execute. The stdout and stderr of the executed commands are redirected to
 // the current process's stdout and stderr.
-func ExecuteCommands(commands []string) error {
+func ExecuteCommands(commands []string, dir string) error {
 
 	if len(commands) == 0 {
 		return nil
-	}
-
-	uniqueCommands := make(map[string]bool)
-	for _, pkg := range commands {
-		uniqueCommands[pkg] = true
-	}
-
-	commands = []string{}
-	for pkg := range uniqueCommands {
-		commands = append(commands, pkg)
 	}
 
 	for _, command := range commands {
@@ -130,6 +120,7 @@ func ExecuteCommands(commands []string) error {
 			args = parts[1:]
 		}
 		cmd := exec.Command(cmdName, args...)
+		cmd.Dir = dir
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		err := cmd.Run()

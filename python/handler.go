@@ -3,6 +3,7 @@ package python
 import (
 	"langforge/environment"
 	"langforge/system"
+	"path/filepath"
 )
 
 type PythonHandler struct {
@@ -42,7 +43,13 @@ func (h *PythonHandler) DetermineInstalledIntegrations() error {
 	return nil
 }
 
-func (h *PythonHandler) ExecuteChanges() error {
+func (h *PythonHandler) ExecuteChanges(dir string) error {
+
+	err := SetJupyterEnvironmentVariables(dir)
+	if err != nil {
+		return err
+	}
+
 	install := []*environment.Integration{}
 	uninstall := []*environment.Integration{}
 
@@ -69,12 +76,12 @@ func (h *PythonHandler) ExecuteChanges() error {
 		uninstallPackages = append(uninstallPackages, integration.Packages...)
 	}
 
-	err := UninstallPackages(uninstallPackages)
+	err = UninstallPackages(uninstallPackages)
 	if err != nil {
 		return err
 	}
 
-	err = system.ExecuteCommands(pre)
+	err = system.ExecuteCommands(pre, dir)
 	if err != nil {
 		return err
 	}
@@ -84,13 +91,38 @@ func (h *PythonHandler) ExecuteChanges() error {
 		return err
 	}
 
-	err = system.ExecuteCommands(post)
+	err = system.ExecuteCommands(post, dir)
 	if err != nil {
 		return err
 	}
 
 	for _, integration := range h.integrations {
 		integration.Installed = integration.Selected
+	}
+
+	err = WriteRequirementsTxt(filepath.Join(dir, "requirements.txt"))
+	if err != nil {
+		panic(err)
+	}
+
+	isJupyterLabInstalled := false
+	for _, integration := range h.integrations {
+		if integration.Name == "jupyterlab" {
+			isJupyterLabInstalled = integration.Installed
+			break
+		}
+	}
+
+	if isJupyterLabInstalled {
+		err = EnableJupyterLabExtensions(dir)
+		if err != nil {
+			panic(err)
+		}
+
+		err = WriteIPythonStartupScripts(dir)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	return nil
