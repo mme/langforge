@@ -8,16 +8,23 @@ import (
 
 type PythonHandler struct {
 	integrations []*environment.Integration
+	dir          string
 }
 
-func NewPythonHandler() environment.EnvironmentHandler {
+func NewPythonHandler(dir string) environment.EnvironmentHandler {
 	return &PythonHandler{
 		integrations: environment.CopyIntegrations(availableIntegrations),
+		dir:          dir,
 	}
 }
 
 func (h *PythonHandler) DetermineInstalledIntegrations() error {
 	packages, err := GetInstalledPackages()
+	if err != nil {
+		return err
+	}
+
+	env, err := system.GetEnv(h.dir)
 	if err != nil {
 		return err
 	}
@@ -32,20 +39,35 @@ func (h *PythonHandler) DetermineInstalledIntegrations() error {
 	for _, m := range h.integrations {
 		m.Installed = true
 
-		for _, packageName := range m.Packages {
-			if !packagesMap[packageName] {
-				m.Installed = false
-				break
+		if len(m.Packages) == 0 || m.Name == "gooseai" {
+			// If the module has no packages, check if the API key is set
+			for _, apiKey := range m.ApiKeys {
+				if _, ok := env[apiKey]; !ok {
+					m.Installed = false
+					break
+				}
+			}
+		} else {
+			for _, packageName := range m.Packages {
+				if !packagesMap[packageName] {
+					m.Installed = false
+					break
+				}
+			}
+
+			if m.Installed {
+				m.Selected = true
 			}
 		}
+
 	}
 
 	return nil
 }
 
-func (h *PythonHandler) ExecuteChanges(dir string) error {
+func (h *PythonHandler) ExecuteChanges() error {
 
-	err := SetJupyterEnvironmentVariables(dir)
+	err := SetJupyterEnvironmentVariables(h.dir)
 	if err != nil {
 		return err
 	}
@@ -65,6 +87,7 @@ func (h *PythonHandler) ExecuteChanges(dir string) error {
 	packages := []string{}
 	post := []string{}
 	uninstallPackages := []string{}
+	removeApiKeys := []string{}
 
 	for _, integration := range install {
 		pre = append(pre, integration.PreInstallCommands...)
@@ -74,6 +97,15 @@ func (h *PythonHandler) ExecuteChanges(dir string) error {
 
 	for _, integration := range uninstall {
 		uninstallPackages = append(uninstallPackages, integration.Packages...)
+		removeApiKeys = append(removeApiKeys, integration.ApiKeys...)
+	}
+
+	// if jupyterlab needs to be installed, pin it to a specific version (3.6.2)
+	for ix, pkg := range packages {
+		if pkg == "jupyterlab" {
+			packages[ix] = "jupyterlab==3.6.2"
+			break
+		}
 	}
 
 	err = UninstallPackages(uninstallPackages)
@@ -81,7 +113,7 @@ func (h *PythonHandler) ExecuteChanges(dir string) error {
 		return err
 	}
 
-	err = system.ExecuteCommands(pre, dir)
+	err = system.ExecuteCommands(pre, h.dir)
 	if err != nil {
 		return err
 	}
@@ -91,7 +123,7 @@ func (h *PythonHandler) ExecuteChanges(dir string) error {
 		return err
 	}
 
-	err = system.ExecuteCommands(post, dir)
+	err = system.ExecuteCommands(post, h.dir)
 	if err != nil {
 		return err
 	}
@@ -100,26 +132,42 @@ func (h *PythonHandler) ExecuteChanges(dir string) error {
 		integration.Installed = integration.Selected
 	}
 
-	err = WriteRequirementsTxt(filepath.Join(dir, "requirements.txt"))
+	err = WriteRequirementsTxt(filepath.Join(h.dir, "requirements.txt"))
 	if err != nil {
 		panic(err)
 	}
 
-	isJupyterLabInstalled := false
-	for _, integration := range h.integrations {
+	wasJupyterLabInstalled := false
+	for _, integration := range install {
 		if integration.Name == "jupyterlab" {
-			isJupyterLabInstalled = integration.Installed
+			wasJupyterLabInstalled = true
 			break
 		}
 	}
 
-	if isJupyterLabInstalled {
-		err = EnableJupyterLabExtensions(dir)
+	if len(removeApiKeys) > 0 {
+		env, err := system.GetEnv(h.dir)
+		if err != nil {
+			return err
+		}
+
+		for _, apiKey := range removeApiKeys {
+			delete(env, apiKey)
+		}
+
+		err = system.WriteEnv(h.dir, env)
+		if err != nil {
+			return err
+		}
+	}
+
+	if wasJupyterLabInstalled {
+		err = EnableJupyterLabExtensions(h.dir)
 		if err != nil {
 			panic(err)
 		}
 
-		err = WriteIPythonStartupScripts(dir)
+		err = WriteIPythonStartupScripts(h.dir)
 		if err != nil {
 			panic(err)
 		}

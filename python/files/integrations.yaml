@@ -108,7 +108,7 @@
     - HUGGINGFACEHUB_API_TOKEN
 
 - name: petals
-  title: Petals
+  title: Petals (Linux only)
   selected: false
   packages:
     - petals
@@ -236,13 +236,6 @@
   selected: false
   packages:
     - manifest-ml
-
-- name: helicone
-  title: Helicone
-  selected: false
-  packages: []
-  apiKeys:
-    - OPENAI_API_KEY
 
 - name: modal
   title: Modal

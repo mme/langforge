@@ -1,0 +1,16 @@
+#!/bin/bash
+
+(
+  source /tmp/myapp/.venv/bin/activate;
+  cd jupyterlab_extension &&
+  pip install -U pip setuptools &&
+  pip install jupyter-packaging cookiecutter &&
+  pip install -ve . &&
+  jupyter labextension develop --overwrite .
+)
+
+# VSCode instructions:
+# - Press Cmd+Shift+P
+# - Select: Type Python: Select Interpreter 
+# - Click on the Enter interpreter path...
+# - Enter: /tmp/myapp/.venv/bin/python

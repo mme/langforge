@@ -1,0 +1,220 @@
+/*
+    See the JupyterLab Developer Guide for useful CSS Patterns:
+
+    https://jupyterlab.readthedocs.io/en/stable/developer/css.html
+*/
+
+.jp-LangForge-Sidebar {
+  color: var(--jp-ui-font-color1);
+  background: var(--jp-layout-color1);
+  display: flex;
+}
+
+.jp-LangForge-react {
+  display: flex;
+  flex: 1;
+  overflow: auto;
+}
+
+.jp-LangForge-root {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.jp-LangForge-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.jp-LangForge-chat {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex: 1;
+  flex-grow: 1;
+}
+
+.jp-LangForge-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.jp-LangForge-chat-message-row {
+  width: 100%;
+  color: #4b5563;
+  border-bottom: var(--jp-border-width) solid var(--jp-border-color1);
+  color: var(--jp-ui-font-color1);
+  background: var(--jp-layout-color1);
+}
+
+.jp-LangForge-chat-message-row-user {
+  color: var(--jp-ui-font-color1);
+  background: var(--jp-layout-color1);
+}
+
+.jp-LangForge-chat-message-row-llm {
+  color: var(--jp-ui-font-color1);
+  background: var(--jp-layout-color1);
+}
+
+.jp-LangForge-chat-message-container {
+  gap: 1rem;
+  padding: 1.5rem;
+  display: flex;
+  flex: 1;
+  margin: auto;
+  max-width: 600px;
+}
+
+.jp-LangForge-chat-avatar {
+  width: 30px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  align-items: flex-end;
+  flex: none;
+}
+
+.jp-LangForge-chat-message {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin-top: 5px;
+}
+
+.jp-LangForge-chat-input-form {
+  display: grid;
+  grid-template-columns: 1fr minmax(auto, 620px) 1fr;
+  border-top: var(--jp-border-width) solid var(--jp-border-color1);
+  border-bottom: var(--jp-border-width) solid var(--jp-border-color1);
+  background: var(--jp-layout-color2);
+}
+
+.jp-LangForge-chat-input-container {
+  display: inline-flex;
+  padding: 10px;
+  padding-right: 35px;
+  position: relative;
+  background: var(--jp-layout-color1);
+  grid-column: 2;
+  border-radius: 5px;
+  margin: 3px;
+  border: var(--jp-border-width) solid var(--jp-border-color1);
+}
+
+.jp-LangForge-chat-input {
+  resize: none;
+  border: none;
+  font-size: 14px;
+  margin: 0px;
+  width: 100%;
+  background: var(--jp-layout-color1);
+  color: var(--jp-ui-font-color1);
+}
+
+.jp-LangForge-chat-send-button {
+  display: flex;
+  width: 22px;
+  height: 22px;
+  padding: 5px;
+  padding-top: 5px;
+  background-color: transparent;
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  cursor: pointer;
+  color: var(--jp-brand-color1);
+  border: none;
+}
+
+.jp-LangForge-chat-send-button:disabled {
+  color: var(--jp-ui-font-color1);
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+.jp-LangForge-chat-send-button svg {
+  width: 100%;
+  height: 100%;
+}
+
+.jp-LangForge-chat-send-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 5px;
+}
+
+.jp-LangForge-avatar-bot {
+  width: 25px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.jp-LangForge-avatar-user {
+  width: 25px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.jp-LangForge-chat-header {
+  display: flex;
+  justify-content: center; /* Center child element horizontally */
+  align-items: center;
+  height: 52px;
+  border-bottom: var(--jp-border-width) solid var(--jp-border-color1);
+  background: var(--jp-layout-color1);
+}
+
+.jp-LangForge-llm-var-select {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  max-width: 628px;
+}
+
+.jp-LangForge-llm-var-select select {
+  display: flex;
+  flex: 1;
+  flex-grow: 1;
+  font-size: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
+  height: 36px;
+  border: 1px solid var(--jp-border-color1);
+  background: url(data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0Ljk1IDEwIj48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6I2ZmZjt9LmNscy0ye2ZpbGw6IzQ0NDt9PC9zdHlsZT48L2RlZnM+PHRpdGxlPmFycm93czwvdGl0bGU+PHJlY3QgY2xhc3M9ImNscy0xIiB3aWR0aD0iNC45NSIgaGVpZ2h0PSIxMCIvPjxwb2x5Z29uIGNsYXNzPSJjbHMtMiIgcG9pbnRzPSIxLjQxIDQuNjcgMi40OCAzLjE4IDMuNTQgNC42NyAxLjQxIDQuNjciLz48cG9seWdvbiBjbGFzcz0iY2xzLTIiIHBvaW50cz0iMy41NCA1LjMzIDIuNDggNi44MiAxLjQxIDUuMzMgMy41NCA1LjMzIi8+PC9zdmc+)
+    no-repeat 95% 50%;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+  font-size: 14px;
+  padding-left: 10px;
+}
+
+.jp-LangForge-select-bot {
+  display: flex;
+  flex: 1;
+  flex-grow: 1;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  color: var(--jp-ui-font-color1);
+  background: var(--jp-layout-color1);
+}
+
+pre.jp-LangForge {
+  margin: 0;
+  padding: 0;
+}

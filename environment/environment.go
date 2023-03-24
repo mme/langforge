@@ -4,7 +4,7 @@ type EnvironmentHandler interface {
 	DetermineInstalledIntegrations() error
 	NamesOfIntegrationsToInstall() []string
 	NamesOfIntegrationsToUninstall() []string
-	ExecuteChanges(dir string) error
+	ExecuteChanges() error
 	InstalledIntegrationsApiKeys() []string
 	GetIntegrations() []*Integration
 }

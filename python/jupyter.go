@@ -1,6 +1,7 @@
 package python
 
 import (
+	"io/fs"
 	"os"
 	"path/filepath"
 )
@@ -32,14 +33,31 @@ func EnableJupyterLabExtensions(dir string) error {
 }
 
 func WriteIPythonStartupScripts(dir string) error {
+	err := writeIPythonStartupScript(dir, "00-dotenv.py")
+	if err != nil {
+		return err
+	}
+
+	err = writeIPythonStartupScript(dir, "10-extension-support.py")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func writeIPythonStartupScript(dir string, filename string) error {
 	iPythonStartupDir := filepath.Join(dir, ".ipython", "profile_default", "startup")
 	err := os.MkdirAll(iPythonStartupDir, 0755)
 	if err != nil {
 		return err
 	}
 
-	iPythonStartupFile := filepath.Join(iPythonStartupDir, "00-dotenv.py")
-	iPythonStartupFileContents := []byte("from dotenv import load_dotenv\nload_dotenv()\n")
+	iPythonStartupFile := filepath.Join(iPythonStartupDir, filename)
+	iPythonStartupFileContents, err := fs.ReadFile(embeddedFS, "files/startup/"+filename)
+	if err != nil {
+		panic(err)
+	}
 
 	err = os.WriteFile(iPythonStartupFile, iPythonStartupFileContents, 0644)
 	if err != nil {

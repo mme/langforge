@@ -1,6 +1,10 @@
 package environment
 
-import "langforge/tui"
+type SelectableItem interface {
+	GetTitle() string
+	IsSelected() bool
+	SetSelected(bool)
+}
 
 type Integration struct {
 	Name                string   `yaml:"name"`
@@ -46,8 +50,8 @@ func CopyIntegrations(integrations []*Integration) []*Integration {
 	return result
 }
 
-func IntegrationsToSelectableItems(integrations []*Integration) []tui.SelectableItem {
-	selectableItems := make([]tui.SelectableItem, len(integrations))
+func IntegrationsToSelectableItems(integrations []*Integration) []SelectableItem {
+	selectableItems := make([]SelectableItem, len(integrations))
 	for i, integration := range integrations {
 		selectableItems[i] = integration
 	}

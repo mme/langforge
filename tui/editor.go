@@ -2,7 +2,7 @@ package tui
 
 import (
 	"fmt"
-	"os"
+	"langforge/environment"
 	"strings"
 
 	"atomicgo.dev/keyboard/keys"
@@ -14,13 +14,7 @@ func init() {
 	pterm.ThemeDefault.SecondaryStyle = pterm.Style{pterm.FgGray, pterm.BgDefault}
 }
 
-type SelectableItem interface {
-	GetTitle() string
-	IsSelected() bool
-	SetSelected(bool)
-}
-
-func EditMultiSelect(promptMessage string, items []SelectableItem) ([]SelectableItem, error) {
+func EditMultiSelect(promptMessage string, items []environment.SelectableItem) ([]environment.SelectableItem, error) {
 	var options []string
 	var defaultOptions []string
 	for _, item := range items {
@@ -110,17 +104,6 @@ func EditSelect(message string, options []string, showDone bool) (int, error) {
 }
 
 func EditApiKeys(apiKeys []string, env map[string]string) (map[string]string, error) {
-	// Ensure all apiKeys are present in env
-	for _, apiKey := range apiKeys {
-		if _, ok := env[apiKey]; !ok {
-			// If the environment variable is set in the system, use its value; otherwise, use the empty string
-			envValue, ok := os.LookupEnv(apiKey)
-			if !ok {
-				envValue = ""
-			}
-			env[apiKey] = envValue
-		}
-	}
 
 	const setIndicator = " (set)"
 
@@ -158,4 +141,65 @@ func EditApiKeys(apiKeys []string, env map[string]string) (map[string]string, er
 	}
 
 	return env, nil
+}
+
+func printInfo(handler environment.EnvironmentHandler) {
+	if len(handler.NamesOfIntegrationsToInstall()) != 0 {
+		fmt.Println("The following integrations will be installed:", handler.NamesOfIntegrationsToInstall())
+	} else {
+		fmt.Println("No additional integrations will be installed.")
+	}
+	EmptyLine()
+
+	if len(handler.NamesOfIntegrationsToUninstall()) != 0 {
+		fmt.Println("The following integrations will be uninstalled:", handler.NamesOfIntegrationsToUninstall())
+		EmptyLine()
+		fmt.Println("All API keys for these integrations will be deleted.")
+		EmptyLine()
+	}
+}
+
+func EditAndUpdateIntegrations(handler environment.EnvironmentHandler, askPreEdit bool, askPostEdit bool) error {
+	err := handler.DetermineInstalledIntegrations()
+	if err != nil {
+		return err
+	}
+
+	shouldEditIntegrations := true
+
+	if askPreEdit {
+		printInfo(handler)
+
+		shouldEditIntegrations, err = PromptYesNo("Would you like to edit the list of integrations?", false)
+		if err != nil {
+			return err
+		}
+		EmptyLine()
+	}
+
+	if shouldEditIntegrations {
+		// Ask the user which integrations to install
+		_, err := EditMultiSelect("Select the integrations you want to install", environment.IntegrationsToSelectableItems(handler.GetIntegrations()))
+		if err != nil {
+			return err
+		}
+	}
+
+	if askPostEdit {
+		printInfo(handler)
+		shouldContinue, err := PromptYesNo("Continue?", false)
+		if err != nil {
+			return err
+		}
+		if !shouldContinue {
+			return nil
+		}
+	}
+
+	if len(handler.NamesOfIntegrationsToInstall()) != 0 || len(handler.NamesOfIntegrationsToUninstall()) != 0 {
+		fmt.Println("Updating dependencies...")
+		EmptyLine()
+	}
+
+	return handler.ExecuteChanges()
 }

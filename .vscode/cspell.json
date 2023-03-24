@@ -66,6 +66,13 @@
     "labextension",
     "ipython",
     "IPYTHONDIR",
-    "extensionmanager"
+    "extensionmanager",
+    "lumino",
+    "svgstr",
+    "Autosize",
+    "evalue",
+    "ename",
+    "linkify",
+    "hljs"
   ]
 }

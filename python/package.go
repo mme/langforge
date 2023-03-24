@@ -6,6 +6,7 @@ import (
 	"langforge/system"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 // PythonPackage represents a Python package with its name and version.
@@ -78,7 +79,8 @@ func managePackages(packages []string, action string) error {
 	}
 
 	// Manage the packages using pip
-	args := append([]string{"-m", "pip", action}, packages...)
+	args := append([]string{"-m", "pip"}, strings.Split(action, " ")...)
+	args = append(args, packages...)
 	args = append(args, "--disable-pip-version-check")
 	cmd := exec.Command(pythonPath, args...)
 	cmd.Stdout = os.Stdout
@@ -99,5 +101,5 @@ func InstallPackages(packages []string) error {
 // if it fails to locate the Python interpreter, execute the pip command or
 // manage packages.
 func UninstallPackages(packages []string) error {
-	return managePackages(packages, "uninstall")
+	return managePackages(packages, "uninstall -y")
 }

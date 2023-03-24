@@ -2,6 +2,7 @@ package system
 
 import (
 	"os"
+	"path/filepath"
 
 	"github.com/joho/godotenv"
 )
@@ -66,4 +67,38 @@ func UnsetAPIKeys(path string, keys []string) ([]string, error) {
 	}
 
 	return unsetKeys, nil
+}
+
+func GetEnv(dir string) (map[string]string, error) {
+
+	// get the .env file path
+	dotEnvPath := filepath.Join(dir, ".env")
+
+	// Check if the env file exists
+	if _, err := os.Stat(dotEnvPath); err != nil {
+		if os.IsNotExist(err) {
+			return map[string]string{}, nil
+		} else {
+			return nil, err
+		}
+	} else {
+		return ReadEnv(dotEnvPath)
+	}
+
+}
+
+func SetDefaultEnv(apiKeys []string, env map[string]string) map[string]string {
+	// Ensure all apiKeys are present in env
+	for _, apiKey := range apiKeys {
+		if _, ok := env[apiKey]; !ok {
+			// If the environment variable is set in the system, use its value; otherwise, use the empty string
+			envValue, ok := os.LookupEnv(apiKey)
+			if !ok {
+				envValue = ""
+			}
+			env[apiKey] = envValue
+		}
+	}
+
+	return env
 }

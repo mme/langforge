@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"fmt"
-	"langforge/environment"
 	"langforge/python"
 	"langforge/system"
 	"langforge/tui"
@@ -52,8 +51,6 @@ func init() {
 
 func createAppCmd(appName string) {
 
-	handler := python.NewPythonHandler()
-
 	currentDir, err := os.Getwd()
 	if err != nil {
 		fmt.Println("Error getting current directory:", err)
@@ -61,6 +58,8 @@ func createAppCmd(appName string) {
 	}
 
 	dir := filepath.Join(currentDir, appName)
+
+	handler := python.NewPythonHandler(dir)
 
 	// Check if a file with the specified app name already exists
 	if _, err := os.Stat(dir); err == nil {
@@ -90,32 +89,6 @@ func createAppCmd(appName string) {
 		}
 	}
 
-	if len(handler.NamesOfIntegrationsToInstall()) != 0 {
-		fmt.Println("The following integrations will be installed:", handler.NamesOfIntegrationsToInstall())
-	} else {
-		fmt.Println("No additional integrations will be installed.")
-	}
-	tui.EmptyLine()
-
-	if len(handler.NamesOfIntegrationsToUninstall()) != 0 {
-		fmt.Println("The following integrations will be uninstalled:", handler.NamesOfIntegrationsToUninstall())
-		tui.EmptyLine()
-	}
-
-	shouldEditIntegrations, err := tui.PromptYesNo("Would you like to edit the list of integrations?", false)
-	if err != nil {
-		panic(err)
-	}
-	tui.EmptyLine()
-
-	if shouldEditIntegrations {
-		// Ask the user which integrations to install
-		_, err := tui.EditMultiSelect("Select the integrations you want to install:", environment.IntegrationsToSelectableItems(handler.GetIntegrations()))
-		if err != nil {
-			panic(err)
-		}
-	}
-
 	// Create the app directory
 	if err := os.Mkdir(appName, 0755); err != nil {
 		panic(err)
@@ -136,11 +109,7 @@ func createAppCmd(appName string) {
 		}
 	}
 
-	// Install dependencies
-	fmt.Println("Installing dependencies...")
-	tui.EmptyLine()
-
-	err = handler.ExecuteChanges(dir)
+	err = tui.EditAndUpdateIntegrations(handler, true, false)
 	if err != nil {
 		panic(err)
 	}
@@ -169,7 +138,7 @@ func createAppCmd(appName string) {
 		if nAPIKeys == 1 {
 			fmt.Println(tui.Bold("We found 1 API key associated with your installed integration:"))
 		} else {
-			fmt.Printf(tui.Bold("We found %d API keys associated with your installed integrations:\n"), nAPIKeys)
+			fmt.Println(tui.Bold("We found %d API keys associated with your installed integrations:", nAPIKeys))
 		}
 		for _, key := range apiKeys {
 			if unsetKeysMap[key] {
@@ -179,6 +148,15 @@ func createAppCmd(appName string) {
 			}
 		}
 
+		// Load the environment from the .env file
+		env, err := system.ReadEnv(dotEnvPath)
+		if err != nil {
+			panic(err)
+		}
+
+		// Set the default values for the API keys
+		env = system.SetDefaultEnv(apiKeys, env)
+
 		tui.EmptyLine()
 		shouldEditApiKeys, err := tui.PromptYesNo("Would you like to edit your API keys now?", true)
 		if err != nil {
@@ -187,11 +165,6 @@ func createAppCmd(appName string) {
 
 		if shouldEditApiKeys {
 			tui.EmptyLine()
-			// Load the environment from the .env file
-			env, err := system.ReadEnv(dotEnvPath)
-			if err != nil {
-				panic(err)
-			}
 
 			// Edit the environment (only API keys)
 			editedEnv, err := tui.EditApiKeys(apiKeys, env)
@@ -199,13 +172,16 @@ func createAppCmd(appName string) {
 				panic(err)
 			}
 
-			// Save the edited environment back to the .env file
-			err = system.WriteEnv(dotEnvPath, editedEnv)
-			if err != nil {
-				panic(err)
-			}
+			env = editedEnv
+
 		} else {
 			tui.EmptyLine()
+		}
+
+		// Save the edited environment back to the .env file
+		err = system.WriteEnv(dotEnvPath, env)
+		if err != nil {
+			panic(err)
 		}
 	}
 
