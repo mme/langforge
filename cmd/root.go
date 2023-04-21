@@ -4,6 +4,7 @@ Copyright © Markus Ecker <markus.ecker@gmail.com>
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -30,6 +31,7 @@ the underlying infrastructure.`,
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
+	defer recoverFromPanic()
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
@@ -46,4 +48,10 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+func recoverFromPanic() {
+	if r := recover(); r != nil {
+		fmt.Fprintf(os.Stderr, "Error: %s\n", r)
+	}
 }

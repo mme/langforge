@@ -5,10 +5,14 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 import { LangForgeSidebarWidget } from './sidebar';
-import { INotebookTracker, NotebookPanel } from '@jupyterlab/notebook';
+import { NotebookPanel } from '@jupyterlab/notebook';
 import { Widget } from '@lumino/widgets';
 // import { executeCode } from './notebook';
-import { newApplicationState, State } from './state';
+import { Jupyter } from './jupyter';
+import { newJupyterState } from './interfaces';
+import { ILauncher } from '@jupyterlab/launcher';
+import { addLaunchers } from './launcher-utils';
+import { monkeyPatchLauncher } from './monkey-patch';
 
 /**
  * Initialization data for the langforge extension.
@@ -16,14 +20,18 @@ import { newApplicationState, State } from './state';
 const plugin: JupyterFrontEndPlugin<void> = {
   id: 'langforge:plugin',
   autoStart: true,
-  requires: [ILayoutRestorer, INotebookTracker, ILabShell],
+  requires: [ILayoutRestorer, ILabShell, ILauncher],
   activate: (
     app: JupyterFrontEnd,
     restorer: ILayoutRestorer,
-    notebookTracker: INotebookTracker,
-    labShell: ILabShell
+    labShell: ILabShell,
+    launcher: ILauncher
   ) => {
-    const state = State.getInstance();
+    const { commands } = app;
+    monkeyPatchLauncher();
+    addLaunchers(commands, launcher);
+
+    const state = Jupyter.getInstance();
     // Instantiate the widget
     const sidebarWidget = new LangForgeSidebarWidget(state);
 
@@ -34,49 +42,34 @@ const plugin: JupyterFrontEndPlugin<void> = {
     restorer.add(sidebarWidget, sidebarWidget.id);
 
     app.restored.then(() => {
+      currentChanged(labShell.currentWidget);
+
       labShell.currentChanged.connect(async (sender, args) => {
-        const newValue = args.newValue as Widget;
-        if (newValue instanceof NotebookPanel) {
-          await newValue.sessionContext.ready;
-          let kernelName = newValue.sessionContext.session?.kernel?.name;
-          let isPythonNotebook =
-            kernelName !== null &&
-            kernelName !== undefined &&
-            kernelName.startsWith('python');
-          state.applicationState = newApplicationState(isPythonNotebook);
-          if (isPythonNotebook) {
-            state.currentNotebookPanel = newValue;
-          } else {
-            state.currentNotebookPanel = null;
-          }
-        } else {
-          state.applicationState = newApplicationState(false);
-          state.currentNotebookPanel = null;
-        }
+        currentChanged(args.newValue);
       });
-      // notebookTracker.currentChanged.connect(async (tracker, panel) => {
-      //   state;
-      //   console.log('currentChanged', tracker, panel);
-      //   if (panel) {
-      //     let notebookName: string = panel.context.path;
-      //     let result = await executeCode(panel, 'pass', {
-      //       globals:
-      //         '{k: v for k, v in globals().items() if not k.startswith("_")}'
-      //     });
-      //     console.log(result.globals.data['text/plain']);
-      //     console.log('session Context', panel.sessionContext.isReady);
-      //     let isPython = notebookName.endsWith('.ipynb');
-      //     if (isPython) {
-      //       console.log('Python notebook');
-      //     } else {
-      //       console.log('Not a Python notebook');
-      //     }
-      //   } else {
-      //     console.log('No active notebook');
-      //   }
-      // });
     });
   }
 };
+
+async function currentChanged(newValue: Widget | null) {
+  const state = Jupyter.getInstance();
+  if (newValue instanceof NotebookPanel) {
+    await newValue.sessionContext.ready;
+    let kernelName = newValue.sessionContext.session?.kernel?.name;
+    let isPythonNotebook =
+      kernelName !== null &&
+      kernelName !== undefined &&
+      kernelName.startsWith('python');
+    state.state = newJupyterState(isPythonNotebook, false);
+    if (isPythonNotebook) {
+      state.currentNotebookPanel = newValue;
+    } else {
+      state.currentNotebookPanel = null;
+    }
+  } else {
+    state.state = newJupyterState(false, false);
+    state.currentNotebookPanel = null;
+  }
+}
 
 export default plugin;

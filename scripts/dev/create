@@ -1,5 +1,5 @@
 #!/bin/bash
 
 go install && (
-  cd /tmp && rm -rf myapp && langforge create myapp
+  cd /Users/mme/tmp && rm -rf myapp && langforge create myapp
 )

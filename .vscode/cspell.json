@@ -73,6 +73,15 @@
     "evalue",
     "ename",
     "linkify",
-    "hljs"
+    "hljs",
+    "monkeypatch",
+    "testutils",
+    "ipynb",
+    "ipywidgets",
+    "jsonify",
+    "mkmsg",
+    "docmanager",
+    "aarch",
+    "cmdclass"
   ]
 }

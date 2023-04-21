@@ -1,0 +1,11 @@
+#!/bin/bash
+
+(
+  source .venv/bin/activate;
+  cd jupyterlab_extension &&
+  jlpm run build &&
+  pip install build &&
+  python -m build &&
+  mv dist/langforge-0.1.0-py3-none-any.whl ../python/files/langforge-0.1.0-py3-none-any.whl &&
+  rm -rf dist
+)

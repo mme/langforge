@@ -11,19 +11,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var notebookCmd = &cobra.Command{
-	Use:   "notebook",
-	Short: "Starts a Jupyter Notebook server and opens a browser",
+var jupyterLabCmd = &cobra.Command{
+	Use:   "lab",
+	Short: "Starts a JupyterLab server and opens a browser",
 	Run: func(cmd *cobra.Command, args []string) {
-		startNotebookCmd()
+		startJupyterLabCmd()
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(notebookCmd)
+	rootCmd.AddCommand(jupyterLabCmd)
 }
 
-func startNotebookCmd() {
+func startJupyterLabCmd() {
 	cwd, err := os.Getwd()
 	if err != nil {
 		fmt.Println("Error getting current directory:", err)
@@ -48,12 +48,12 @@ func startNotebookCmd() {
 	}
 
 	// Start the Jupyter Notebook server
-	notebookCmd := exec.Command("jupyter", "lab", "--LabApp.default_url='/doc'")
-	var notebookOutput bytes.Buffer
-	notebookCmd.Stdout = &notebookOutput
-	notebookCmd.Stderr = os.Stderr
+	labCmd := exec.Command("jupyter", "lab")
+	var labOutput bytes.Buffer
+	labCmd.Stdout = &labOutput
+	labCmd.Stderr = os.Stderr
 
-	err = notebookCmd.Run()
+	err = labCmd.Run()
 	if err != nil {
 		panic(err)
 	}

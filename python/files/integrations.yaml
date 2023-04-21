@@ -11,6 +11,10 @@
     - ipykernel
     - jupyterlab
     - python-dotenv
+    - ipywidgets
+    - jupyter_notebook_parser
+    - Flask
+    - waitress
   postInstallCommands:
     - jupyter labextension disable @jupyterlab/apputils-extension:announcements
 
@@ -279,3 +283,9 @@
   selected: false
   apiKeys:
     - WRITER_API_KEY
+
+- name: pypdf
+  title: PyPDF
+  selected: false
+  packages:
+    - pypdf

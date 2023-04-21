@@ -100,14 +100,6 @@ func (h *PythonHandler) ExecuteChanges() error {
 		removeApiKeys = append(removeApiKeys, integration.ApiKeys...)
 	}
 
-	// if jupyterlab needs to be installed, pin it to a specific version (3.6.2)
-	for ix, pkg := range packages {
-		if pkg == "jupyterlab" {
-			packages[ix] = "jupyterlab==3.6.2"
-			break
-		}
-	}
-
 	err = UninstallPackages(uninstallPackages)
 	if err != nil {
 		return err
@@ -163,6 +155,11 @@ func (h *PythonHandler) ExecuteChanges() error {
 
 	if wasJupyterLabInstalled {
 		err = EnableJupyterLabExtensions(h.dir)
+		if err != nil {
+			panic(err)
+		}
+
+		err = InstallLangforgeJupyterExtension(h.dir)
 		if err != nil {
 			panic(err)
 		}

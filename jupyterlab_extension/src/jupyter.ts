@@ -1,55 +1,20 @@
 import { NotebookPanel } from '@jupyterlab/notebook';
 import { executeCode } from './notebook';
-import MarkdownIt from 'markdown-it';
+import { newJupyterState, JupyterState } from './interfaces';
+import { markdown } from './markdown-utils';
 
-export interface Turn {
-  type: 'llm' | 'user';
-  msg: string;
-}
-
-export interface LlmVar {
-  id: string;
-  name: string;
-  type: string;
-  input: string;
-}
-
-export interface ApplicationState {
-  isPythonNotebook: boolean;
-  llmVars: LlmVar[];
-  currentLlmVar: LlmVar | null;
-  history: Turn[];
-  initializing: boolean;
-  thinking: boolean;
-}
-
-export function newApplicationState(
-  isPythonNotebook: boolean
-): ApplicationState {
-  return {
-    isPythonNotebook: isPythonNotebook,
-    llmVars: [],
-    currentLlmVar: null,
-    history: [],
-    initializing: true,
-    thinking: false
-  };
-}
-
-export class State {
-  private _applicationState: ApplicationState = newApplicationState(false);
-  private _applicationStateChangedCallbacks: ((
-    state: ApplicationState
-  ) => void)[] = [];
+export class Jupyter {
+  private _jupyterState: JupyterState = newJupyterState(false);
+  private _jupyterStateChangedCallbacks: ((state: JupyterState) => void)[] = [];
   private _currentNotebookPanel: NotebookPanel | null = null;
   private _isTicking: boolean = false;
   private _updateStatus: 'none' | 'sending' | 'discard' = 'none';
 
-  private static _instance: State | null = null;
+  private static _instance: Jupyter | null = null;
 
-  static getInstance(): State {
+  static getInstance(): Jupyter {
     if (this._instance === null) {
-      this._instance = new State();
+      this._instance = new Jupyter();
     }
     return this._instance;
   }
@@ -71,10 +36,10 @@ export class State {
       this._updateStatus = 'none';
     }
 
-    if (this._applicationState.isPythonNotebook && this._currentNotebookPanel) {
+    if (this._jupyterState.isPythonNotebook && this._currentNotebookPanel) {
       this._isTicking = true;
       try {
-        let newState = { ...this._applicationState };
+        let newState = { ...this._jupyterState };
 
         await this._queryLlmVars(newState);
         this._setCurrentLlmVar(newState);
@@ -91,7 +56,7 @@ export class State {
           return;
         }
 
-        this.applicationState = newState;
+        this.state = newState;
       } catch (e) {
         console.log('error', e);
       } finally {
@@ -100,7 +65,7 @@ export class State {
     }
   }
 
-  private async exec(output: { [key: string]: string[] }) {
+  private async _exec(output: { [key: string]: string[] }) {
     let payload: { [key: string]: string } = {};
     for (let key in output) {
       let fun = output[key][0];
@@ -132,10 +97,10 @@ export class State {
     return result;
   }
 
-  private async _queryLlmVars(newState: ApplicationState) {
+  private async _queryLlmVars(newState: JupyterState) {
     try {
       newState.llmVars = (
-        await this.exec({ llmVars: ['get_llm_vars'] })
+        await this._exec({ llmVars: ['get_llm_vars'] })
       ).llmVars;
     } catch (e) {
       const error = e as Error;
@@ -144,7 +109,7 @@ export class State {
     }
   }
 
-  private _setCurrentLlmVar(newState: ApplicationState) {
+  private _setCurrentLlmVar(newState: JupyterState) {
     if (
       newState.currentLlmVar !== null &&
       newState.llmVars.filter(
@@ -159,13 +124,13 @@ export class State {
     }
   }
 
-  private async _queryHistory(newState: ApplicationState) {
+  private async _queryHistory(newState: JupyterState) {
     try {
       if (!newState.currentLlmVar) {
         return;
       }
       newState.history = (
-        await this.exec({
+        await this._exec({
           history: [
             'get_history',
             newState.currentLlmVar.name,
@@ -200,17 +165,17 @@ export class State {
     return null;
   }
 
-  onApplicationStateChanged(callback: (state: ApplicationState) => void) {
-    this._applicationStateChangedCallbacks.push(callback);
+  onStateChanged(callback: (state: JupyterState) => void) {
+    this._jupyterStateChangedCallbacks.push(callback);
   }
 
-  get applicationState() {
-    return this._applicationState;
+  get state() {
+    return this._jupyterState;
   }
 
-  set applicationState(state: ApplicationState) {
-    this._applicationState = state;
-    this._applicationStateChangedCallbacks.forEach(callback => callback(state));
+  set state(state: JupyterState) {
+    this._jupyterState = state;
+    this._jupyterStateChangedCallbacks.forEach(callback => callback(state));
   }
 
   get currentNotebookPanel() {
@@ -223,23 +188,23 @@ export class State {
 
   async sendMessage(msg: string) {
     if (
-      !this._applicationState.isPythonNotebook ||
+      !this._jupyterState.isPythonNotebook ||
       !this._currentNotebookPanel ||
-      !this._applicationState.currentLlmVar
+      !this._jupyterState.currentLlmVar
     ) {
       return;
     }
     this._updateStatus = 'sending';
 
     try {
-      const newState = { ...this._applicationState };
-      newState.history.push(markdown({ msg: msg, type: 'user' }));
+      const newState = { ...this._jupyterState };
+      newState.history.push(markdown({ text: msg, type: 'input' }));
       newState.thinking = true;
 
-      this.applicationState = newState;
+      this.state = newState;
 
       newState.history = (
-        await this.exec({
+        await this._exec({
           history: [
             'send_message',
             newState.currentLlmVar!.name,
@@ -252,54 +217,17 @@ export class State {
       newState.history = newState.history.map(h => markdown(h));
       newState.thinking = false;
 
-      this.applicationState = newState;
+      this.state = newState;
     } finally {
       this._updateStatus = 'discard';
     }
   }
 
   selectLlmVar(id: string) {
-    const newState = { ...this._applicationState };
+    const newState = { ...this._jupyterState };
     newState.currentLlmVar = newState.llmVars.filter(
       llmVar => llmVar.id === id
     )[0];
-    this.applicationState = newState;
-  }
-}
-
-const md = new MarkdownIt({
-  html: true,
-  linkify: true,
-  typographer: true
-});
-
-function markdown(turn: Turn): Turn {
-  let text = turn.msg;
-  try {
-    // escape double quotes
-    text = text.replace(/"/g, '\\"');
-    text = JSON.parse(`"${text}"`);
-  } catch (err) {
-    console.error('Invalid string format:', err);
-    console.error(text);
-    return turn;
-  }
-
-  if (turn.type === 'user') {
-    return { type: turn.type, msg: text.replace(/\n/g, '<br/>') };
-  } else {
-    text = text.trim();
-    text = md.render(text);
-    text = text
-      .replace(/<pre>/g, '<pre class="jp-LangForge">')
-      .replace(/<code>/g, '<code class="jp-LangForge">');
-    text = text.trim();
-
-    // remove leading and trailing <p> tags
-    if (text.startsWith('<p>') && text.endsWith('</p>')) {
-      text = text.substring(3, text.length - 4);
-    }
-
-    return { type: turn.type, msg: text.replace(/\n/g, '<br/>') };
+    this.state = newState;
   }
 }

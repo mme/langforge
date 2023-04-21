@@ -2,8 +2,8 @@
 # https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
 #
 # Binaries for programs and plugins
-*.exe
-*.exe~
+# *.exe
+# *.exe~
 *.dll
 *.so
 *.dylib
@@ -21,3 +21,13 @@
 go.work
 
 .DS_Store
+
+langforge.egg-info
+
+dist
+build
+
+pypi/langforge/bin
+python/files/langforge-0.1.0-py3-none-any.whl
+
+.venv

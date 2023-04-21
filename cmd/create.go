@@ -18,7 +18,7 @@ import (
 var createCmd = &cobra.Command{
 	Use:   "create [app-name]",
 	Short: "Create a new langchain application",
-	Long: `The create command generates a new langchain application with LangForge. 
+	Long: `The create command generates a new LangChain application with LangForge. 
 	
 It sets up a virtual environment, installs dependencies, 
 and generates a Jupyter notebook for experimentation. 
