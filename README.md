@@ -1,3 +1,5 @@
+![LangForge](https://github.com/mme/langforge/raw/main/docs/img/header.png "LangForge")
+
 # LangForge: Create and Deploy LangChain Apps
 
 LangForge is an open-source toolkit designed to make it easy to create and deploy LangChain applications.
