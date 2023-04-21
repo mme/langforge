@@ -21,9 +21,7 @@ var createCmd = &cobra.Command{
 	Long: `The create command generates a new LangChain application with LangForge. 
 	
 It sets up a virtual environment, installs dependencies, 
-and generates a Jupyter notebook for experimentation. 
-Simply run "langforge create myapp" to create a new 
-directory with all the necessary files to get started.`,
+and configures API keys, allowing you to get started quickly`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
 			return fmt.Errorf("app name is missing")
@@ -37,16 +35,6 @@ directory with all the necessary files to get started.`,
 
 func init() {
 	rootCmd.AddCommand(createCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// createCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// createCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 func createAppCmd(appName string) {

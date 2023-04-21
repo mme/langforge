@@ -13,7 +13,10 @@ import (
 
 var jupyterLabCmd = &cobra.Command{
 	Use:   "lab",
-	Short: "Starts a JupyterLab server and opens a browser",
+	Short: " launches JupyterLab for instant coding in your virtual environment.",
+	Long: `The lab command starts a JupyterLab server within your virtual environment and 
+launches a browser window, enabling you to begin coding immediately in an 
+interactive workspace.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		startJupyterLabCmd()
 	},

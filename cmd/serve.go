@@ -19,7 +19,7 @@ import (
 var serveCmd = &cobra.Command{
 	Use:   "serve [notebook.ipynb]",
 	Short: "Serve a LangChain application",
-	Long:  `The serve command serves a LangChain from a Jupyter notebook.`,
+	Long:  `The serve command serves a LangChain application from a Jupyter notebook.`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) < 1 {
 			return fmt.Errorf("notebook is missing")

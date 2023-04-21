@@ -13,16 +13,12 @@ import (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "langforge",
-	Short: "LangForge: A utility for building langchain applications",
-	Long: `LangForge is a utility for building and deploying langchain applications. 
+	Short: "LangForge: A toolkit for building LangChain applications",
+	Long: `LangForge is a toolkit for building and deploying LangChain applications. 
 	
 It simplifies the process by handling dependencies, providing 
 Jupyter notebooks for experimentation, and enabling you to 
-interact with your chains via a REST API. 
-
-With LangForge, you can focus on developing your models 
-and delivering value to your users without worrying about 
-the underlying infrastructure.`,
+interact with your chains via a REST API.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
