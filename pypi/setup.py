@@ -5,11 +5,11 @@ with open(os.path.join("..", "README.md"), "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name='langforge',
+    name='langforge-cli',
     version='0.1.0',
     author="Markus Ecker",
     author_email="markus.ecker@gmail.com",
-    description="A tool for building and deploying LangChain applications.",
+    description="A Toolkit for Creating and Deploying LangChain Apps",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/mme/langforge",

@@ -15,7 +15,7 @@ With LangForge, you can easily set up your environment, manage API keys, chat wi
 To install LangForge, simply run the following command:
 
 ```bash
-pip install langforge
+pip install langforge-cli
 ```
 
 ## Getting Started

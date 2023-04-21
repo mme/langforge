@@ -13,8 +13,8 @@ import (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "langforge",
-	Short: "LangForge: A toolkit for building LangChain applications",
-	Long: `LangForge is a toolkit for building and deploying LangChain applications. 
+	Short: "LangForge: A Toolkit for Creating and Deploying LangChain Apps",
+	Long: `LangForge is a toolkit for creating and deploying LangChain apps.
 	
 It simplifies the process by handling dependencies, providing 
 Jupyter notebooks for experimentation, and enabling you to 
