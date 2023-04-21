@@ -1,10 +1,8 @@
 ![LangForge](https://github.com/mme/langforge/raw/main/docs/img/header.png "LangForge")
 
-# LangForge: Create and Deploy LangChain Apps
+LangForge is an **open-source toolkit** designed to make it easy to create and deploy **_LangChain applications_**.
 
-LangForge is an open-source toolkit designed to make it easy to create and deploy LangChain applications.
-
-With LangForge, you can easily set up your environment, manage API keys, chat with your chains using the Jupyter integration, and automatically generate a REST interface for your app. Additionally, LangForge comes with a collection of predefined notebooks tailored for various use cases, allowing you to quickly get started and adapt them to your specific needs.
+With LangForge, you can easily **_set up your environment_**, manage API keys, **_chat with your chains_** using the **_Jupyter integration_**, and **_automatically generate a REST interface_** for your app. Additionally, LangForge comes with a collection of **_predefined notebooks tailored for various use cases_**, allowing you to quickly get started and adapt them to your specific needs.
 
 ## Features
 
