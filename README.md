@@ -1,6 +1,7 @@
-# LangForge: A Toolkit for Creating and Deploying LangChain Apps
+# LangForge: Create and Deploy LangChain Apps
 
 LangForge is an open-source toolkit designed to make it easy to create and deploy LangChain applications.
+
 With LangForge, you can easily set up your environment, manage API keys, chat with your chains using the Jupyter integration, and automatically generate a REST interface for your app. Additionally, LangForge comes with a collection of predefined notebooks tailored for various use cases, allowing you to quickly get started and adapt them to your specific needs.
 
 ## Features
