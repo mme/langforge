@@ -28,6 +28,7 @@ dist
 build
 
 pypi/langforge/bin
+npm/bin
 python/files/langforge-0.1.0-py3-none-any.whl
 
 .venv

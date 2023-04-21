@@ -1,0 +1,32 @@
+{
+  "name": "langforge",
+  "version": "0.1.1",
+  "description": "A tool for building and deploying LangChain applications",
+  "main": "langforge.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mme/langforge.git"
+  },
+  "keywords": [
+    "langchain",
+    "llm",
+    "openai",
+    "jupyter"
+  ],
+  "author": "Markus Ecker",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mme/langforge/issues"
+  },
+  "homepage": "https://github.com/mme/langforge#readme",
+  "bin": {
+    "langforge": "./langforge.js"
+  },
+  "files": [
+    "bin/*",
+    "langforge.js"
+  ]
+}

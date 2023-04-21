@@ -12,5 +12,7 @@ GOOS=linux GOARCH=amd64 go build -o build/golang/langforge-linux-amd64
 GOOS=linux GOARCH=arm64 go build -o build/golang/langforge-linux-arm64
 
 mkdir -p  pypi/langforge/bin
+mkdir -p  npm/bin
 
 cp build/golang/* pypi/langforge/bin
+cp build/golang/* npm/bin
