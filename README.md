@@ -21,7 +21,7 @@ pip install langforge-cli
 
 ## Getting Started
 
-1. **Create a new LangChain app:** Use the create command to generate a new LangChain app. LangForge will set up a virtual environment, install the required packages, and configure the API keys, settingup a ready-to-use foundation for building your app.
+1. **Create a new LangChain app:** Use the create command to generate a new LangChain app. LangForge will set up a virtual environment, install the required packages, and configure the API keys, setting up a ready-to-use foundation for building your app.
 
 ```bash
 langforge create myapp
