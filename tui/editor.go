@@ -128,7 +128,7 @@ func EditApiKeys(apiKeys []string, env map[string]string) (map[string]string, er
 			break
 		}
 
-		selectedKey := strings.TrimSuffix(strings.TrimPrefix(options[choiceIndex], setIndicator), " ")
+		selectedKey := strings.TrimSuffix(strings.TrimSuffix(options[choiceIndex], setIndicator), " ")
 		fmt.Printf("Editing API key: %s\n", selectedKey)
 
 		newValue, err := PromptPassword("Enter the new value:")
