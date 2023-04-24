@@ -54,59 +54,14 @@ This template will make ChatGPT behave like an old school adventure game. To pla
 
 ![Chat](./docs/img/chat.png "Chat")
 
-Great! Let's go through the Jupyter notebook. In the first cell, we find Jupyter magic commands that ensure all necessary integrations are installed and your API keys are properly configured.
+Great! Note that upon running the first cell, a table displaying your API keys will appear. If your OpenAI key was not set during app creation, simply click the edit button and input your key.
 
 ```python
 # make sure all packages are installed and environment variables are set
 %setup langchain openai
 ```
 
-Note that upon running the cell, a table displaying your API keys will appear. If your OpenAI key was not set during app creation, simply click the edit button and input your key.
-
 ![API Key](./docs/img/api-key.png "API Key")
-
-In the second cell, we import the required classes from LangChain.
-
-```python
-from langchain.prompts import (
-    ChatPromptTemplate,
-    MessagesPlaceholder,
-    SystemMessagePromptTemplate,
-    HumanMessagePromptTemplate
-)
-from langchain.chains import ConversationChain
-from langchain.chat_models import ChatOpenAI
-from langchain.memory import ConversationBufferMemory
-```
-
-The third cell contains the core functionality of the application:
-
-```python
-template = """This is a conversation between a human and a system called AdventureGPT.
-
-AdventureGPT is designed to create immersive and engaging text-based adventure games.
-
-AdventureGPT is capable of understanding both simple commands, such as 'look,' and more
-complex sentences, allowing it to effectively interpret the player's intent.
-"""
-
-prompt = ChatPromptTemplate.from_messages([
-    SystemMessagePromptTemplate.from_template(template),
-    MessagesPlaceholder(variable_name="history"),
-    HumanMessagePromptTemplate.from_template("{input}")
-])
-
-llm = ChatOpenAI(temperature=1)
-# if you want GPT-4:
-# llm = ChatOpenAI(temperature=1, model_name="gpt-4")
-
-memory = ConversationBufferMemory(return_messages=True)
-gpt_adventure = ConversationChain(memory=memory, prompt=prompt, llm=llm)
-```
-
-We begin with the template variable, which contains a string that establishes the context for the conversation between the human and AdventureGPT, outlining its purpose and capabilities. Next, we employ `ChatPromptTemplate` to create our `prompt`, which is formed using the context template, a placeholder for the conversation history, and a template for the user's input. This prompt will be utilized to generate responses from the language model.
-
-Finally, we instantiate `ChatOpenAI` as our large language model, create the `memory` for our conversation, and initialize a `ConversationChain` instance that combines the memory, prompt, and language model.
 
 Let's change the prompt to customize our adventure. You can come up with any scenario you want. In this tutorial, we will go for a space adventure.
 
