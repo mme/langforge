@@ -11,6 +11,7 @@ from dotenv import load_dotenv # type: ignore
 import os
 import argparse
 from waitress import serve # type: ignore
+import logging
 
 parser = argparse.ArgumentParser(description="LangForge server script")
 parser.add_argument("filename", help="File name")
@@ -37,6 +38,13 @@ code = "\n".join([line for line in code.split('\n') if not line.startswith('%')]
 exec(code, globals(), locals())
 
 app = Flask(__name__)
+logger = logging.getLogger("langforge")
+logger.setLevel(logging.INFO)
+
+@app.before_request
+def before_request():
+    logger.info(f"{request.method} {request.path} - {request.remote_addr}")
+
 
 @app.route('/chat/<name>', methods=['POST'])
 def chat(name):
