@@ -5,11 +5,11 @@ import argparse
 from packaging.version import Version
 
 def read_version():
-    with open(os.path.join(os.path.dirname(__file__), 'VERSION'), 'r') as version_file:
+    with open('VERSION', 'r') as version_file:
         return version_file.read().strip()
 
 def write_version(version):
-    with open(os.path.join(os.path.dirname(__file__), 'VERSION'), 'w') as version_file:
+    with open('VERSION', 'w') as version_file:
         version_file.write(str(version))
 
 def increment_version(version):
