@@ -82,6 +82,8 @@
     "mkmsg",
     "docmanager",
     "aarch",
-    "cmdclass"
+    "cmdclass",
+    "setuptools",
+    "pypi"
   ]
 }
