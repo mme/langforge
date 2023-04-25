@@ -7,8 +7,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Setup Python
         uses: actions/setup-python@v2
@@ -35,23 +37,21 @@ jobs:
       - name: Run bump script
         run: ./scripts/dev/bump
 
-      - name: Run build script
-        run: ./scripts/dev/build
+      # - name: Run build script
+      #   run: ./scripts/dev/build
 
-      - name: Publish package on NPM 📦
-        run: npm publish
-        working-directory: npm
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # - name: Publish package on NPM
+      #   run: npm publish
+      #   working-directory: npm
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Build and publish package on PyPI 📦
-        run: |
-          python -m build
-          python -m twine upload dist/*
-        working-directory: pypi
-        env:
-          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+      # - name: Publish package on PyPI
+      #   run: python -m twine upload dist/*
+      #   working-directory: pypi
+      #   env:
+      #     TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+      #     TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
 
       - name: Commit and push changes
         run: |
@@ -59,10 +59,10 @@ jobs:
           git config --global user.email "actions@github.com"
           git add .
           git commit -m "Bump version and publish"
-          git push
+          git push https://${{ secrets.GH_TOKEN }}@github.com/mme/langforge.git
 
       - name: Merge to main branch
         run: |
           git checkout main
           git merge --no-ff release
-          git push
+          git push https://${{ secrets.GH_TOKEN }}@github.com/mme/langforge.git

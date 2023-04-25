@@ -26,6 +26,7 @@ langforge.egg-info
 
 
 /build/
+pypi/langforge_ai.egg-info
 
 pypi/langforge/bin
 pypi/langforge_cli.egg-info
