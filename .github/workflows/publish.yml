@@ -18,7 +18,7 @@ jobs:
           python-version: "3.x"
 
       - name: Install Jupyter Lab
-        run: pip install jupyterlab
+        run: python3 -m pip install jupyterlab
 
       - name: Install python packaging tools
         run: pip install setuptools wheel twine
