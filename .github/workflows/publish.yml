@@ -38,16 +38,14 @@ jobs:
       - name: Run build script
         run: ./scripts/dev/build
 
-      - name: Publish package on NPM 📦
+      - name: Publish package on NPM
         run: npm publish
         working-directory: npm
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Build and publish package on PyPI 📦
-        run: |
-          python -m build
-          python -m twine upload dist/*
+      - name: Publish package on PyPI
+        run: python -m twine upload dist/*
         working-directory: pypi
         env:
           TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}

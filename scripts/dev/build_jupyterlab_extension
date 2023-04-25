@@ -1,7 +1,6 @@
 #!/bin/bash
 
 (
-  source .venv/bin/activate;
   cd jupyterlab_extension &&
   jlpm install &&
   jlpm run build &&
