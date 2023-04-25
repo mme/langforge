@@ -3,6 +3,7 @@
 (
   source .venv/bin/activate;
   cd jupyterlab_extension &&
+  jlpm install &&
   jlpm run build &&
   pip install build &&
   python -m build &&
