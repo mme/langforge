@@ -1,0 +1,2 @@
+[console_scripts]
+langforge = langforge.main:main
