@@ -7,8 +7,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Setup Python
         uses: actions/setup-python@v2
@@ -35,8 +37,8 @@ jobs:
       - name: Run bump script
         run: ./scripts/dev/bump
 
-      - name: Run build script
-        run: ./scripts/dev/build
+      # - name: Run build script
+      #   run: ./scripts/dev/build
 
       # - name: Publish package on NPM
       #   run: npm publish
