@@ -57,10 +57,10 @@ jobs:
           git config --global user.email "actions@github.com"
           git add .
           git commit -m "Bump version and publish"
-          git push
+          git push https://${{ secrets.GH_TOKEN }}@github.com/mme/langforge.git
 
       - name: Merge to main branch
         run: |
           git checkout main
           git merge --no-ff release
-          git push
+          git push https://${{ secrets.GH_TOKEN }}@github.com/mme/langforge.git
