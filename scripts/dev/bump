@@ -25,7 +25,7 @@ def update_npm_version(update_version):
     else:
         print("Not updating version")
 
-    npm_dir = os.path.join(os.path.dirname(__file__), 'npm')
+    npm_dir = 'npm'
     package_json_path = os.path.join(npm_dir, 'package.json')
 
     with open(package_json_path, 'r', encoding='utf-8') as package_json_file:
