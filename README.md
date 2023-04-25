@@ -14,7 +14,7 @@ LangForge is an **open-source toolkit** designed to make it easy to create and d
 To install LangForge, simply run the following command:
 
 ```bash
-pip install langforge-cli
+pip install langforge-ai
 ```
 
 ## Getting Started

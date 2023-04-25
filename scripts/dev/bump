@@ -1,0 +1,44 @@
+#!/usr/bin/env python
+import os
+import json
+import argparse
+from packaging.version import Version
+
+def read_version():
+    with open(os.path.join(os.path.dirname(__file__), 'VERSION'), 'r') as version_file:
+        return version_file.read().strip()
+
+def write_version(version):
+    with open(os.path.join(os.path.dirname(__file__), 'VERSION'), 'w') as version_file:
+        version_file.write(str(version))
+
+def increment_version(version):
+    return str(Version(version).next_minor())
+
+def update_npm_version(update_version):
+    current_version = read_version()
+    new_version = increment_version(current_version) if update_version else current_version
+
+    if update_version:
+        write_version(new_version)
+        print(f"Updating version from {current_version} to {new_version}")
+    else:
+        print("Not updating version")
+
+    npm_dir = os.path.join(os.path.dirname(__file__), 'npm')
+    package_json_path = os.path.join(npm_dir, 'package.json')
+
+    with open(package_json_path, 'r', encoding='utf-8') as package_json_file:
+        package_data = json.load(package_json_file)
+
+    package_data['version'] = new_version
+
+    with open(package_json_path, 'w', encoding='utf-8') as package_json_file:
+        json.dump(package_data, package_json_file, indent=2)
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--update-version', default=True, type=lambda x: (str(x).lower() == 'true'))
+    args = parser.parse_args()
+
+    update_npm_version(args.update_version)

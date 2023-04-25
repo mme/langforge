@@ -1,16 +1,22 @@
 from setuptools import setup, find_packages
 import os
 
-with open(os.path.join("..", "README.md"), "r", encoding="utf-8") as fh:
-    long_description = fh.read()
+def read_version():
+    with open(os.path.join(os.path.dirname(__file__), '..', 'VERSION'), 'r') as version_file:
+        return version_file.read().strip()
+
+def read_long_description():
+    with open(os.path.join(os.path.dirname(__file__), '..', 'README.md'), 'r', encoding='utf-8') as fh:
+        return fh.read()
+
 
 setup(
-    name='langforge-cli',
-    version='0.1.0',
+    name='langforge-ai',
+    version=read_version(),
     author="Markus Ecker",
     author_email="markus.ecker@gmail.com",
     description="A Toolkit for Creating and Deploying LangChain Apps",
-    long_description=long_description,
+    long_description=read_long_description(),
     long_description_content_type="text/markdown",
     url="https://github.com/mme/langforge",
     packages=find_packages(),

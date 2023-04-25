@@ -24,11 +24,13 @@ go.work
 
 langforge.egg-info
 
-dist
-build
+
+/build/
 
 pypi/langforge/bin
 pypi/langforge_cli.egg-info
+pypi/build/
+pypi/dist
 npm/bin
 python/files/langforge-0.1.0-py3-none-any.whl
 
