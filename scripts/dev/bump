@@ -13,7 +13,8 @@ def write_version(version):
         version_file.write(str(version))
 
 def increment_version(version):
-    return str(Version(version).next_minor())
+    major, minor, patch = map(int, version.split('.'))
+    return f"{major}.{minor}.{patch + 1}"
 
 def update_npm_version(update_version):
     current_version = read_version()
