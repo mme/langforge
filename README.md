@@ -42,7 +42,7 @@ Your project comes with ready-to-use templates for various use cases and an inte
 
 In this example, we select the "Creative ChatGPT" template.
 
-![Templates](./docs/img/templates.png "Templates")
+![Templates](https://github.com/mme/langforge/raw/main/docs/img/templates.png "Templates")
 
 ### Develop your LangChain app
 
@@ -52,7 +52,7 @@ Select `Kernel > Restart Kernel and Run All Cells...`
 
 This template will make ChatGPT behave like an old school adventure game. To play with it, click the smiling robot face on the upper right to open a chat window.
 
-![Chat](./docs/img/chat.png "Chat")
+![Chat](https://github.com/mme/langforge/raw/main/docs/img/chat.png "Chat")
 
 Great! Note that upon running the first cell, a table displaying your API keys will appear. If your OpenAI key was not set during app creation, simply click the edit button and input your key.
 
@@ -61,7 +61,7 @@ Great! Note that upon running the first cell, a table displaying your API keys w
 %setup langchain openai
 ```
 
-![API Key](./docs/img/api-key.png "API Key")
+![API Key](https://github.com/mme/langforge/raw/main/docs/img/api-key.png "API Key")
 
 Let's change the prompt to customize our adventure. You can come up with any scenario you want. In this tutorial, we will go for a space adventure.
 
