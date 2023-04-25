@@ -37,21 +37,21 @@ jobs:
       - name: Run bump script
         run: ./scripts/dev/bump
 
-      # - name: Run build script
-      #   run: ./scripts/dev/build
+      - name: Run build script
+        run: ./scripts/dev/build
 
-      # - name: Publish package on NPM
-      #   run: npm publish
-      #   working-directory: npm
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish package on NPM
+        run: npm publish
+        working-directory: npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      # - name: Publish package on PyPI
-      #   run: python -m twine upload dist/*
-      #   working-directory: pypi
-      #   env:
-      #     TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-      #     TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+      - name: Publish package on PyPI
+        run: python -m twine upload dist/*
+        working-directory: pypi
+        env:
+          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
 
       - name: Commit and push changes
         run: |
