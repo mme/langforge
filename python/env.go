@@ -5,6 +5,7 @@ import (
 	"langforge/system"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 )
 
@@ -13,10 +14,28 @@ import (
 // it is looked for in the default environment directory.
 func ActivateEnvironment(envName string, envDir ...string) error {
 	var activateScript string
-	if len(envDir) > 0 {
-		activateScript = fmt.Sprintf("%s/%s/bin/activate", envDir[0], envName)
+
+	if system.IsWindows() {
+		if system.IsPowerShell() {
+			if len(envDir) > 0 {
+				activateScript = path.Join(envDir[0], envName, "Scripts", "Activate.ps1")
+			} else {
+				activateScript = path.Join(envName, "Scripts", "Activate.ps1")
+			}
+		} else {
+			if len(envDir) > 0 {
+				activateScript = filepath.Join(envDir[0], envName, "Scripts", "activate.bat")
+			} else {
+				activateScript = filepath.Join(envName, "Scripts", "activate.bat")
+			}
+		}
+
 	} else {
-		activateScript = fmt.Sprintf("%s/bin/activate", envName)
+		if len(envDir) > 0 {
+			activateScript = path.Join(envDir[0], envName, "bin", "activate")
+		} else {
+			activateScript = path.Join(envName, "bin", "activate")
+		}
 	}
 
 	// Check if the environment exists
@@ -28,8 +47,20 @@ func ActivateEnvironment(envName string, envDir ...string) error {
 	}
 
 	// Activate the environment
-	if err := system.ShellSource(activateScript); err != nil {
-		return fmt.Errorf("failed to activate environment %q: %v", envName, err)
+	if system.IsWindows() {
+		if system.IsPowerShell() {
+			if err := system.ShellSourcePowerShell(activateScript); err != nil {
+				return fmt.Errorf("failed to activate environment %q: %v", envName, err)
+			}
+		} else {
+			if err := system.ShellSourceBatch(activateScript); err != nil {
+				return fmt.Errorf("failed to activate environment %q: %v", envName, err)
+			}
+		}
+	} else {
+		if err := system.ShellSourceUnix(activateScript); err != nil {
+			return fmt.Errorf("failed to activate environment %q: %v", envName, err)
+		}
 	}
 
 	return nil
@@ -56,7 +87,13 @@ func CreateVirtualEnv(envName string, envDir ...string) error {
 	}
 
 	// Create the virtual environment using the venv module
-	cmd := exec.Command(pythonPath, "-m", "venv", "--clear", "--symlinks", envAbsPath)
+	var cmd *exec.Cmd
+
+	if system.IsWindows() {
+		cmd = exec.Command(pythonPath, "-m", "venv", "--clear", envAbsPath)
+	} else {
+		cmd = exec.Command(pythonPath, "-m", "venv", "--clear", "--symlinks", envAbsPath)
+	}
 
 	// Set the command's Stdout and Stderr fields to os.Stdout and os.Stderr respectively
 	cmd.Stdout = os.Stdout
