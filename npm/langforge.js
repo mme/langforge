@@ -18,8 +18,6 @@ if (platform === "linux" && arch === "x64") {
   binaryName = "langforge-macos-arm64";
 } else if (platform === "win32" && arch === "x64") {
   binaryName = "langforge-windows-amd64.exe";
-} else if (platform === "win32" && arch === "arm64") {
-  binaryName = "langforge-windows-arm64.exe";
 } else {
   console.error("Unsupported platform or architecture:", platform, arch);
   process.exit(1);

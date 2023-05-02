@@ -1,5 +1,0 @@
-#!/bin/bash
-
-scripts/dev/build_jupyterlab_extension &&
-scripts/dev/build_go_binaries &&
-scripts/dev/build_pypi

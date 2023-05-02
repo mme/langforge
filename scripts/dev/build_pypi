@@ -1,6 +1,0 @@
-#!/bin/bash
-
-(
-  cd pypi &&
-  python setup.py bdist_wheel
-)

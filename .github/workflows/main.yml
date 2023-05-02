@@ -1,0 +1,202 @@
+name: Build, Test, and Release
+on:
+  push:
+    branches:
+      - release
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install upx
+        run: sudo apt-get install -y upx
+
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+
+      - name: Install Python packages
+        run: python3 -m pip install jupyterlab build
+
+      - name: Install python packaging tools
+        run: pip install setuptools wheel twine
+
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: "1.x"
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14.x"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Run bump target
+        run: make bump
+
+      - name: Build and archive
+        run: make
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-artifacts
+          path: build
+
+  test-macos:
+    runs-on: macos-latest
+    needs: build
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifacts
+          path: build
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+
+      - name: Install the package
+        run: pip install build/pypi/dist/langforge_ai*.whl
+
+      - name: Run CLI tests
+        run: python -m unittest test_cli.py
+
+  test-linux:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifacts
+          path: build
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+
+      - name: Install the package
+        run: pip install build/pypi/dist/langforge_ai*.whl
+
+      - name: Run CLI tests
+        run: python -m unittest test_cli.py
+
+  test-windows:
+    runs-on: windows-latest
+    needs: build
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifacts
+          path: build
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+
+      - name: Set up WSL
+        uses: Vampire/setup-wsl@v2
+        with:
+          distribution: Ubuntu-20.04
+          update: "true"
+          additional-packages: python3 python3-pip
+
+      - name: Install the package
+        run: |
+          $whl_file = Get-ChildItem -Path build/pypi/dist -Filter langforge_ai*.whl | Select-Object -First 1
+          $whl_path = Join-Path -Path "build/pypi/dist" -ChildPath $whl_file.Name
+          pip install $whl_path
+        shell: powershell
+
+      - name: Run CLI tests in PowerShell
+        run: python -m unittest test_cli.py
+        shell: powershell
+
+      - name: Run CLI tests in cmd.exe
+        run: python -m unittest test_cli.py
+        shell: cmd
+
+      - name: Install the package in WSL
+        run: pip install build/pypi/dist/langforge_ai*.whl
+        shell: wsl-bash_Ubuntu-20.04 {0}
+
+      - name: Run CLI tests in wsl
+        run: python3 -m unittest test_cli.py
+        shell: wsl-bash_Ubuntu-20.04 {0}
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [test-macos, test-linux, test-windows]
+    if: github.ref == 'refs/heads/release'
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifacts
+          path: build
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14.x"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install python packaging tools
+        run: pip install setuptools wheel twine
+
+      - name: Publish on PyPI and NPM
+        run: make release
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+
+      - name: Run bump target again to update version in main branch
+        run: make bump
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add .
+          git commit -m "Bump version and publish"
+          git push https://${{ secrets.GH_TOKEN }}@github.com/mme/langforge.git
+
+      - name: Merge to main branch
+        run: |
+          git checkout main
+          git merge --no-ff release
+          git push https://${{ secrets.GH_TOKEN }}@github.com/mme/langforge.git

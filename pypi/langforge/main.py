@@ -11,7 +11,10 @@ def get_path():
     elif platform_system == 'darwin':
         os_name = 'macos'
     elif platform_system == 'windows':
-        os_name = 'windows'
+        if 'microsoft-standard' in platform.uname().release:
+            os_name = 'linux'
+        else:
+            os_name = 'windows'
     else:
         print(f'Unsupported platform: {platform_system}', file=sys.stderr)
         sys.exit(1)   
@@ -21,6 +24,9 @@ def get_path():
     if machine in ['x86_64', 'AMD64']:
         arch = 'amd64'
     elif machine in ['arm64', 'aarch64']:
+        if os_name == 'windows':
+            print(f'Unsupported windows architecture: {machine}', file=sys.stderr)
+            sys.exit(1)  
         arch = 'arm64'
     else:
         print(f'Unsupported architecture: {machine}', file=sys.stderr)

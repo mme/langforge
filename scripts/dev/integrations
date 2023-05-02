@@ -1,5 +1,0 @@
-#!/bin/bash
-
-go install && (
-  cd /Users/mme/tmp/myapp && langforge integrations
-)
