@@ -172,6 +172,9 @@ jobs:
           node-version: "14.x"
           registry-url: "https://registry.npmjs.org"
 
+      - name: Run bump target again
+        run: make bump
+
       - name: Install python packaging tools
         run: pip install setuptools wheel twine
 
@@ -181,9 +184,6 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-
-      - name: Run bump target again to update version in main branch
-        run: make bump
 
       - name: Commit and push changes
         run: |
